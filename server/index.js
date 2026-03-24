@@ -3,6 +3,8 @@ const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
+require("dotenv").config();
+const mongoose = require("mongoose");
 
 const app = express();
 app.use(cors());
@@ -16,6 +18,30 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
+async function startServer() {
+  try {
+    if (process.env.USE_DATABASE === "true") {
+      await mongoose.connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      console.log("✅ MongoDB connected");
+    } else {
+      console.log("⚠️ USE_DATABASE is not enabled; running in in-memory mode");
+    }
+
+    server.listen(process.env.PORT || 5000, () => {
+      console.log(`🚀 Server running on http://localhost:${process.env.PORT || 5000}`);
+      console.log("🔌 Socket.IO enabled for real-time communication");
+    });
+  } catch (err) {
+    console.error("❌ DB connection failed:", err);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 // In-memory storage
 const tours = {};
@@ -572,8 +598,5 @@ app.get("/api/tours", (req, res) => {
   }
 });
 
-server.listen(5000, () => {
-  console.log("🚀 Server running on http://localhost:5000");
-  console.log("💾 Using IN-MEMORY storage (development mode)");
-  console.log("🔌 Socket.IO enabled for real-time communication");
-});
+// Note: server.listen is handled in startServer() to keep DB connection and port config in one place.
+
