@@ -53,18 +53,20 @@ export default function PassengerView() {
 
     socket.on("break-ended", ({ sessionId }) => {
       console.log("✅ Break ended");
-      setTimeLeft(0);
+      setTimeLeft(null);
       setBreakActive(false);
       setSessionStatus("completed");
     });
 
     socket.on("break-paused", ({ sessionId }) => {
       console.log("⏸️ Break paused");
+      setBreakActive(false);
       setSessionStatus("paused");
     });
 
     socket.on("break-resumed", ({ sessionId }) => {
       console.log("▶️ Break resumed");
+      setBreakActive(true);
       setSessionStatus("active");
     });
 

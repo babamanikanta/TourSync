@@ -60,6 +60,10 @@ export default function GuideDashboard() {
     socket.emit("approve-passenger", { tourId, passengerSocketId: socketId });
   };
 
+  const approveAllPassengers = () => {
+    socket.emit("approve-all-passengers", { tourId });
+  };
+
   const rejectPassenger = (socketId) => {
     socket.emit("reject-passenger", { tourId, passengerSocketId: socketId });
   };
@@ -87,7 +91,7 @@ export default function GuideDashboard() {
     });
 
     socket.on("break-ended", () => {
-      setTimeLeft(0);
+      setTimeLeft(null);
       setTimerRunning(false);
       alert("✅ Break session completed!");
     });
@@ -236,30 +240,40 @@ export default function GuideDashboard() {
               {pendingRequests.length === 0 ? (
                 <p className="text-gray-500 text-center py-4">No pending requests</p>
               ) : (
-                <div className="space-y-2">
-                  {pendingRequests.map((req) => (
-                    <div
-                      key={req.socketId}
-                      className="flex justify-between items-center bg-yellow-50 border border-yellow-200 rounded-lg p-4"
+                <>
+                  <div className="mb-3 text-right">
+                    <button
+                      onClick={approveAllPassengers}
+                      className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm"
                     >
-                      <span className="font-medium text-gray-800">{req.name}</span>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => approvePassenger(req.socketId)}
-                          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition text-sm font-medium"
-                        >
-                          ✓ Approve
-                        </button>
-                        <button
-                          onClick={() => rejectPassenger(req.socketId)}
-                          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm font-medium"
-                        >
-                          ✗ Reject
-                        </button>
+                      ✅ Approve All
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {pendingRequests.map((req) => (
+                      <div
+                        key={req.socketId}
+                        className="flex justify-between items-center bg-yellow-50 border border-yellow-200 rounded-lg p-4"
+                      >
+                        <span className="font-medium text-gray-800">{req.name}</span>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => approvePassenger(req.socketId)}
+                            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition text-sm font-medium"
+                          >
+                            ✓ Approve
+                          </button>
+                          <button
+                            onClick={() => rejectPassenger(req.socketId)}
+                            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm font-medium"
+                          >
+                            ✗ Reject
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
 

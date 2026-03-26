@@ -17,21 +17,22 @@ const TourSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    participants: [
-      {
-        socketId: String,
-        name: String,
-        status: {
-          type: String,
-          enum: ["pending", "approved", "rejected"],
-          default: "pending",
-        },
-        joinedAt: {
-          type: Date,
-          default: Date.now,
-        },
+    currentSession: {
+      sessionId: String,
+      startTime: Date,
+      endTime: Date,
+      duration: Number, // in seconds
+      status: {
+        type: String,
+        enum: ["active", "completed", "paused"],
+        default: "active",
       },
-    ],
+      remainingTime: Number,
+      meetingPoint: {
+        lat: Number,
+        lng: Number,
+      },
+    },
     sessions: [
       {
         sessionId: String,
@@ -44,20 +45,16 @@ const TourSchema = new mongoose.Schema(
           default: "active",
         },
         remainingTime: Number,
+        meetingPoint: {
+          lat: Number,
+          lng: Number,
+        },
       },
     ],
     status: {
       type: String,
-      enum: ["active", "completed", "paused"],
+      enum: ["active", "completed"],
       default: "active",
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
     },
   },
   { timestamps: true }
