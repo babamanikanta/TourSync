@@ -1,11 +1,12 @@
 import { io } from "socket.io-client";
 
-const SOCKET_URL =
-  import.meta.env.VITE_SOCKET_URL ||
-  (window.location.origin.includes("localhost") ? "http://localhost:5000" : window.location.origin);
+const URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000"
+    : "https://toursync.onrender.com";
 
-const socket = io(SOCKET_URL, {
-  transports: ["websocket", "polling"],
+const socket = io(URL, {
+  transports: ["websocket"],
 });
 
 export default socket;
